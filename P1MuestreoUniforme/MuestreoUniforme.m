@@ -3,8 +3,8 @@ close all
 
 t=0:.005:.5;
 w=-100:2:100-1;
-x = @(t) 0.5 + sin(4.*pi.*t) - cos(8.*pi.*t) + sin(12.*pi.*t);
-fs=20;
+x = @(t) sinc(200*t).*sinc(200*t);
+fs=5000;
 d=0:1/fs:.5;
 
 %% Graficas de señal original en tiempo y frecuencia
@@ -13,7 +13,6 @@ plot(t,x(t),'LineWidth',1.5);
 title('Señal en el dominio del tiempo')
 xlabel('$ t $','Interpreter','latex');
 ylabel('$ x(t) $','Interpreter','latex');
-axis([0 .5 -1.6 2])
 grid on;
 
 fx=fftshift(fft(x(t),100));
@@ -22,7 +21,6 @@ stem(w,abs(fx),'fill','^');
 title('Señal en el dominio de la frecuencia')
 xlabel('$ f $','Interpreter','latex');
 ylabel('$ X(f) $','Interpreter','latex');
-axis([-100 100 0 52])
 grid on;
 
 %% a) Muestreo ideal
