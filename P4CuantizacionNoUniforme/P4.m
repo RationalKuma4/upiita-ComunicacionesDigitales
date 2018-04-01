@@ -1,9 +1,8 @@
 close all;
 clear all;
-t1=0:.1:1;
-t=0:.001:2;
-x= sin(2*pi*t);
 
+t=0:.001:2;
+x=sin(2*pi*t);
 
 %% Muestreo
 figure(1);
@@ -24,6 +23,7 @@ for i=1:length(t)
 end
 
 muestreoIdeal=x.*trenPulsos;
+xo=x;
 figure(2);
 stem(t,muestreoIdeal,'fill','^');
 title('Muestreo ideal de la señal original');
@@ -59,20 +59,17 @@ num3=str2num(Cod3);
 format longG;
 num4=str2num(Cod4);
 format longG;
-
 %num3=num2str(zeros(1,12));
 
 Cod1
 Cod2
 Cod3
 Cod4
-
 Muestra={'Muestra 1';'Muestra 2';'Muestra 3';'Muestra 4';'Muestra 5';'Muestra 6';'Muestra 7';'Muestra 8';'Muestra 9';'Muestra 10'};
 Codigo=[num1;num2;num2;num1;0;num3;num4;num4;num3;0];
 Tab = table(Muestra,Codigo)
 
 %% Compresion Digital
-
 Comp1=['0111',Cod1(3),Cod1(4),Cod1(5),Cod1(6)]
 Comp2=['0111',Cod2(3),Cod2(4),Cod2(5),Cod2(6)]
 Comp3=['1111',Cod3(3),Cod3(4),Cod3(5),Cod3(6)]
@@ -92,7 +89,7 @@ Compresion =[Co1;Co2;Co2;Co1;0;Co3;Co4;Co4;Co3;0];
 Tab1 = table(Muestra1,Compresion)
 
 
-%%Expansion Digital
+%% Expansion Digital
 Exp1=['01',Comp1(5),Comp1(6),Comp1(7),Comp1(8),'1000000']
 Exp2=['01',Comp2(5),Comp2(6),Comp2(7),Comp2(8),'1000000']
 Exp3=['11',Comp3(5),Comp3(6),Comp3(7),Comp3(8),'1000000']
@@ -107,10 +104,47 @@ format longG;
 Ex4=str2num(Exp4);
 format longG;
 
+%% Decodififcador
 Muestra2 ={'Muestra 1';'Muestra 2';'Muestra 3';'Muestra 4';'Muestra 5';'Muestra 6';'Muestra 7';'Muestra 8';'Muestra 9';'Muestra 10'};
 Expansion =[Ex1;Ex2;Ex2;Ex1;0;Ex3;Ex4;Ex4;Ex3;0];
-Tab1 = table(Muestra2,Expansion)
+Tab1=table(Muestra2,Expansion)
 
 
-%%Interpolador
+%% Interpolador
+dt=0.001;
+x=inline('sin(2*pi.*t)');
+xt=x(t);
+trenPulsos=[];
+for i=1:length(t)
+    if mod(t(i),Ts)==0
+       trenPulsos(i)=1;
+    else
+        trenPulsos(i)=0;
+    end
+end
 
+mideal=xo.*trenPulsos;
+fs=20;
+T=1/fs;
+ts=0:T:2;
+xn=sin(2*pi*ts);
+
+hcero=rectangularPulse((-1:dt:1)*fs);
+zoh=conv(mideal,hcero,'same');
+
+figure(6)
+interpolated1 = 0;
+for n = 1 : length(ts)
+    interpolated1 = interpolated1 + xn(n) * pulstran((t - (n - 1)*T)/T, 0.01, 'rectpuls');
+    hold on;
+    h1=plot(t, interpolated1, 'm--')
+end
+
+h2=plot(t,zoh,'g','LineWidth',1.5);
+hold on;
+h3=plot(t,xt,'b','LineWidth',1.5);
+title('Señal recuperada');
+xlabel('$t$','Interpreter','Latex');
+ylabel('$x_r(t)$','Interpreter','Latex');
+legend([h1 h2 h3],{'Interpolación','Recuperada','Original'});
+grid on;

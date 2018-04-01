@@ -1,9 +1,10 @@
-clear all
+close all;
+clear all;
+
 dt=0.005;
 t=0:dt:1;
 x=inline('sin(2*pi.*t)');
 xt=x(t);
-
 Ts=0.1;
 tren=[]
 for i=1:length(t)
@@ -15,14 +16,11 @@ for i=1:length(t)
         end
 end
 
-
 mideal=xt.*tren;
-
-fs=20;
+fs=10;
 T = 1/fs;
 ts = 0 : T : 1;
 xn = sin(2*pi*ts);
-
 
 %===================== Interpolador de orden cero =======================%
 
@@ -45,13 +43,3 @@ title('Señal recuperada por ZOH')
 xlabel('t')
 ylabel('x_r(t)')
 legend([h1 h2 h3],{'Interpolación','Recuperada','Original'})
-
-
-
-
-
-
-
-
-
-
