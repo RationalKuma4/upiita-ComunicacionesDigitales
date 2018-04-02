@@ -17,7 +17,7 @@ for i=1:length(t)
 end
 
 mideal=xt.*tren;
-fs=10;
+fs=20;
 T = 1/fs;
 ts = 0 : T : 1;
 xn = sin(2*pi*ts);
