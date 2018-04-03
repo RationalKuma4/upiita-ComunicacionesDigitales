@@ -78,8 +78,8 @@ m10 = cellstr(sprintf('%013d',0));
 Muestra={'Muestra 1';'Muestra 2';'Muestra 3';'Muestra 4';'Muestra 5';...
     'Muestra 6';'Muestra 7';'Muestra 8';'Muestra 9';'Muestra 10'};
 %Codigo=[num1;num2;num2;num1;0;num3;num4;num4;num3;0];
-Codigo=[m1;m2;m3;m4;m5;m6;Cod4;Cod4;m9;m10];
-Tab=table(Muestra,Codigo)
+Codigo=[m1;m2;m3;m4;m5;m6;Cod4;Cod4;m9;m10]
+%Tab=table(Muestra,Codigo)
 
 %% Compresion Digital
 Comp1=['0111',Cod1(3),Cod1(4),Cod1(5),Cod1(6)];
@@ -109,8 +109,8 @@ m10 = cellstr(sprintf('%08d',0));
 
 Muestra1 ={'Muestra 1';'Muestra 2';'Muestra 3';'Muestra 4';'Muestra 5';'Muestra 6';'Muestra 7';'Muestra 8';'Muestra 9';'Muestra 10'};
 %Compresion =[Co1;Co2;Co2;Co1;0;Co3;Co4;Co4;Co3;0];
-Compresion=[m1;m2;m3;m4;m5;m6;Cod4;Cod4;m9;m10];
-Tab1=table(Muestra1,Compresion)
+Compresion=[m1;m2;m3;m4;m5;m6;Cod4;Cod4;m9;m10]
+%Tab1=table(Muestra1,Compresion)
 
 
 %% Expansion Digital
@@ -141,9 +141,9 @@ m9 = cellstr(sprintf('%013d',Ex3));
 m10 = cellstr(sprintf('%013d',0));
 
 Muestra2 ={'Muestra 1';'Muestra 2';'Muestra 3';'Muestra 4';'Muestra 5';'Muestra 6';'Muestra 7';'Muestra 8';'Muestra 9';'Muestra 10'};
-Expansion=[m1;m2;m3;m4;m5;m6;Cod4;Cod4;m9;m10];
+Expansion=[m1;m2;m3;m4;m5;m6;Cod4;Cod4;m9;m10]
 %Expansion =[Ex1;Ex2;Ex2;Ex1;0;Ex3;Ex4;Ex4;Ex3;0];
-Tab2=table(Muestra2,Expansion)
+%Tab2=table(Muestra2,Expansion)
 
 
 %% Interpolador
