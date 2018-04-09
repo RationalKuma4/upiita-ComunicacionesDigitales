@@ -5,77 +5,46 @@ clc;
 
 % Abrir archivo
 fid = fopen ('comus.m4a','r');
-% Mostramos Informacion
 audioinfo('comus.m4a')
 
-% Generating the input signal 'm(t)' by reading the binary data in 16 bit
-% integer format from the specified file and writing it into a matrix
-% 'm(t)' and the number of elements successfully read is returned into an
-% output argument 'count'.
+%Generar la señal leyendo en 16 bits
 [m,count] = fread (fid,'int16');
-
-% Redefining the count for efficiency.
 count = 15000;
-
-% Setting the sampling frequency.
-% because the audio signal has a maximum frequency of 4K and according to
-% Nyquist criteria, we get the following sampling frequency.
 Fs = 8000;
-
-% Setting the sampling instant.
 Ts = 1;
-
-% Setting the number of samples to be used.
-No_Samples = (2*Fs)+Ts;
-
-
-% Define the time vector for the calculations.
-time = [1:Fs/64];
-
-% Calculating maximum value of the input signal 'm(t)'.
-Mp = max (m)
-
-% Setting number of bits in a symbol.
+muestras = (2*Fs)+Ts;
+% Vector de tiempo
+tiempo = [1:Fs/64];
+% valor maximo de la funcion
+Mp = max (m);
 bits = 6;
-
-% Number of levels of uniform quantization.
-levels = 2^bits;
-
-% Calculating the bit rate.
+niveles = 2^bits;
 bit_rate = Fs*bits;
 
-% Since the DPCM is implemented by the linear predictor (transversal
-% predictor) Hence setting up the prediction coefficient 'alpha'.
 alpha = 0.45;
 
-% Transmitting the difference.
-% Since there is no estimated value before the first sample so we get
-diff_sig(1) = m(1);
+% Valor de inicio
+dif_sig(1) = m(1);
 
-% Calculating the rest of the values of the difference signal with the help
-% of coefficient.
+% Calculo de los coeficientes
 for k = 2:count,
-    diff_sig(k) = m(k) - alpha*m(k-1);
+    dif_sig(k) = m(k) - alpha*m(k-1);
 end
 
-% Calculating maximum value of the input signal 'diff_sig(t)',i.e, to be
-% quantized.
-Dp = max (diff_sig)
+% Valor maximo de la señal de entrada
+Dp = max (dif_sig);
+% Paso de cuantizacion
+step_size = (2*Mp)/niveles;
 
-
-% Calculating the step size of the quantization.
-step_size = (2*Mp)/levels
-
-% Quantizing the difference signal.
-for k = 1:No_Samples,
+% Cuantizacion
+for k = 1:muestras,
     samp_in(k) = m(k*Ts);
     quant_in(k) = samp_in(k)/step_size;
-    error(k) = (samp_in(k) - quant_in(k))/No_Samples;
+    error(k) = (samp_in(k) - quant_in(k))/muestras;
 end
 
 % quant_in = diff_sig/step_size;
-% Indicating the sign of the input signal 'm(t)' and calculating the
-% quantized signal 'quant_out'.
+% Calculo de señal cuantizada
 signS = sign (m);
 quant_out = quant_in;
 for i = 1:count,
@@ -83,55 +52,75 @@ for i = 1:count,
     quant_out(i) = signS(i)*round(S(i))*step_size;
 end
 
-% Decoding the signal using the quantized difference signal.
+% decodificacion
 s_out = quant_out;
 s_out(1) = quant_out(1);
 for k = 2:count,
     s_out(k) = quant_out(k) + alpha*s_out(k-1);
 end
 
-% Calculating the quantization noise 'Nq'.
-Nq = (((step_size)^2)/12)*((Mp/Dp)^2)
+% ruido de cuantizacion
+Nq = (((step_size)^2)/12)*((Mp/Dp)^2);
 
-% Calculating signal to noise ratio 'SNR'.
-SNR = 1.5*(levels^2)
-SNR_db = 10*log10(SNR)
+% relacion señal a ruido
+SNR = 1.5*(niveles^2);
+SNR_db = 10*log10(SNR);
 
-% Plotting the input signal 'm(t)'.
-%figure;
-subplot(4,1,1);
-plot(time,m(time),time,s_out(time),'r');
-title('Input Speech Signal');
-xlabel('Time');
+% Señal original
+figure(1);
+plot(tiempo,m(tiempo));
+title('Señal de entrada');
+xlabel('t');
 ylabel('m(t)');
 grid on;
 
-% Plotting the quantized signal 'quant_in(t)'.
-%figure;
-subplot(4,1,2);
-stem(time,quant_in(time),'r');
-title('Quantized Speech Signal');
-xlabel('Time');
-ylabel('Levels');
+% Cuantizacion
+figure(2);
+stem(tiempo,quant_in(tiempo),'fill','^');
+title('Señal cuantizada');
+xlabel('t');
+ylabel('Niveles');
 grid on;
 
-% Plotting the DPCM signal 's_out(t)'.
-%figure;
-subplot(4,1,3);
-plot(time,s_out(time));
-title('Decoded DPCM Speech Signal');
-xlabel('Time');
-ylabel('Dq(t)');
+% Señal DPCM
+figure(3);
+plot(tiempo,s_out(tiempo));
+title('Señal codificada');
+xlabel('t');
+ylabel('dq(t)');
 grid on;
 
-% Plotting the error signal 'error(t)'.
-subplot(4,1,4);
-plot(time,error(time));
-title('Error Signal');
-xlabel('Time');
-ylabel('Error(t)');
+% Error
+figure(4);
+plot(tiempo,error(tiempo));
+title('Error de señal');
+xlabel('t');
+ylabel('e(t)');
 grid on;
 
-% Removing all variables, functions, and MEX-files from memory, leaving the
-% workspace empty.
+figure(5);
+plot(tiempo,m(tiempo),tiempo,s_out(tiempo),'r');
+title('Comparacion de señales');
+xlabel('t');
+ylabel('m(t)');
+grid on;
+
+
+predictor = [0 1]; % y(k)=x(k-1)
+partition = [-1:.1:.9];
+codebook = [-1:.1:1];
+x = m(tiempo); % Original signal
+% Quantize x using DPCM.
+encodedx = dpcmenco(x,codebook,partition,predictor);
+audiowrite('test.flac',encodedx,48000,'BitsPerSample',24,...
+'Comment','This is my new audio file.');
+audioinfo('test.flac')
+
+% Try to recover x from the modulated signal.
+decodedx = dpcmdeco(encodedx,codebook,predictor);
+audiowrite('test.flac',encodedx,48000,'BitsPerSample',24,...
+'Comment','This is my new audio file.');
+audioinfo('test2.flac')
+
+
 clear all
