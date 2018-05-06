@@ -29,8 +29,8 @@ for n=1:length(bitsu)
 end
 figure(1);
 plot(t, unrz);
-hold on;
-stem(td, unrz);
+% hold on;
+% stem(td, unrz);
 title('Codigo U-NRZ');
 axis([0, N -.5 1.5]);
 set(gca,'YTick', [0 1])
