@@ -4,19 +4,12 @@ close all;
 
 ts=1/100;
 Tb=1;
-N=10;
+N=1000;
 t=0:ts:N*Tb-ts;
 s1=ones(1,100);
-td=[];
-for nn=1:length(t)
-    if(mod(nn,33)==0)
-        td(nn)=t(nn);
-    else
-        td(nn)=0;
-    end
-end
+fs=1;
 
-bitsu=randi([0 1], 1,10);
+bitsu=randi([0 1],1,1000);
 bitsp=bitsu;
 bitsp(bitsp==0)=-1;
 bitsg=bitsp;
@@ -24,15 +17,18 @@ bitsg(bitsg==-1)=0;
 
 %% U-NRZ
 unrz=[];
-for n=1:length(bitsu)
-    unrz=[unrz s1*bitsu(n)];
+for n=1:length(bitsp)
+    unrz=[unrz s1*bitsp(n)];
 end
+
+[pyy,fy]=pwelch(unrz,5000,4000,1e3,1e10,'centered','psd');
 figure(1);
-plot(t, unrz);
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
 title('Codigo U-NRZ');
-axis([0, length(bitsu) -.5 1.5]);
-set(gca,'YTick', [0 1])
-set(gca,'xticklabel',bitsg.')
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% U-RZ
@@ -46,12 +42,15 @@ for n=1:length(bitsu)
         urz=[urz s1(51:100)*bitsu(n)];
     end
 end
+
+[pyy,fy]=pwelch(urz,5000,4000,1e3,1e10,'centered','psd');
 figure(2);
-plot(t, urz);
-title('Codigo U-RZ');
-axis([0, length(bitsu) -.5 1.5]);
-set(gca,'YTick', [0 1])
-set(gca,'xticklabel',bitsg.')
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
+title('Codigo U-NRZ');
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% P-NRZ
@@ -59,12 +58,15 @@ pnrz=[];
 for n=1:length(bitsu)
     pnrz=[pnrz s1*bitsp(n)];
 end
+
+[pyy,fy]=pwelch(pnrz,5000,4000,1e3,1e10,'centered','psd');
 figure(3);
-plot(t, pnrz);
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
 title('Codigo P-NRZ');
-axis([0, length(bitsu) -1.5 1.5]);
-set(gca,'YTick', [-1 0 1])
-set(gca,'xticklabel',bitsg.')
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% P-RZ
@@ -78,12 +80,15 @@ for n=1:length(bitsu)
         prz=[prz s1(51:100)*0];
     end
 end
+
+[pyy,fy]=pwelch(pnrz,5000,4000,1e3,1e10,'centered','psd');
 figure(4);
-plot(t, prz);
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
 title('Codigo P-RZ');
-axis([0, length(bitsu) -1.5 1.5]);
-set(gca,'YTick', [-1 0 1])
-set(gca,'xticklabel',bitsg.')
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% NRZ-M
@@ -95,12 +100,15 @@ for n=1:length(bitsu)
     end
     nrzm=[nrzm s1*marca];
 end
+
+[pyy,fy]=pwelch(nrzm,5000,4000,1e3,1e10,'centered','psd');
 figure(5);
-plot(t, (nrzm+1)/2);
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
 title('Codigo NRZ-M');
-axis([0, length(bitsu) -.5 1.5]);
-set(gca,'YTick', [0 1])
-set(gca,'xticklabel',bitsg.')
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% NRZ-S
@@ -112,12 +120,15 @@ for n=1:length(bitsu)
     end
     nrzs=[nrzs s1*marca];
 end
+
+[pyy,fy]=pwelch(nrzs,5000,4000,1e3,1e10,'centered','psd');
 figure(6);
-plot(t, (nrzs+1)/2);
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
 title('Codigo NRZ-S');
-axis([0, length(bitsu) -.5 1.5]);
-set(gca,'YTick', [0 1])
-set(gca,'xticklabel',bitsg.')
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% AMI NRZ
@@ -131,12 +142,15 @@ for n=1:length(bitsu)
         anrz=[anrz s1*bitsp(n)*0];
     end
 end
+
+[pyy,fy]=pwelch(anrz,5000,4000,1e3,1e10,'centered','psd');
 figure(7);
-plot(t, anrz);
-title('Codigo AMI-NRZ');
-axis([0, length(bitsu) -1.5 1.5]);
-set(gca,'YTick', [-1 0 1])
-set(gca,'xticklabel',bitsg.')
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
+title('Codigo AMI NRZ');
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% AMI RZ
@@ -151,14 +165,16 @@ for n=1:length(bitsu)
         arz=[arz s1*bitsp(n)*0];
     end
 end
-figure(8);
-plot(t, arz);
-title('Codigo AMI-RZ');
-axis([0, length(bitsu) -1.5 1.5]);
-set(gca,'YTick', [-1 0 1])
-set(gca,'xticklabel',bitsg.')
-grid on;
 
+[pyy,fy]=pwelch(arz,5000,4000,1e3,1e10,'centered','psd');
+figure(8);
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
+title('Codigo AMI RZ');
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
+grid on;
 
 %% Bi Fase M
 s1=[ones(1,50) -1*ones(1,50)];
@@ -174,12 +190,15 @@ for n=1:length(bitsu)
         bfm=[bfm s2*marca];
     end
 end
+
+[pyy,fy]=pwelch(bfm,5000,4000,1e3,1e10,'centered','psd');
 figure(9);
-plot(t, bfm);
-title('Codigo Bifase Marca');
-axis([0, length(bitsu) -1.5 1.5]);
-set(gca,'YTick', [-1 0 1])
-set(gca,'xticklabel',bitsg.')
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
+title('Codigo Bi Fase M');
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% Bi Fase S
@@ -196,12 +215,15 @@ for n=1:length(bitsu)
         bfs=[bfs s2*marca];
     end
 end
+
+[pyy,fy]=pwelch(bfs,5000,4000,1e3,1e10,'centered','psd');
 figure(10);
-plot(t, bfs);
-title('Codigo Bifase Espacio');
-axis([0, length(bitsu) -1.5 1.5]);
-set(gca,'YTick', [-1 0 1])
-set(gca,'xticklabel',bitsg.')
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
+title('Codigo Bi Fase M');
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
 grid on;
 
 %% Manchester Dif
@@ -218,12 +240,14 @@ for n=1:length(bitsu)
         bfs=[bfs s2*marca];
     end
 end
-figure(11);
-plot(t-.5, bfs);
-title('Macnhester Diferencial');
-axis([0, length(bitsu) -1.5 1.5]);
-set(gca,'YTick', [-1 0 1])
-set(gca,'xticklabel',bitsg.')
-grid on;
 
+[pyy,fy]=pwelch(bfs,5000,4000,1e3,1e10,'centered','psd');
+figure(11);
+plotHandle=plot(fy,10*log10((pyy)));
+set(plotHandle);
+title('Codigo Bi Fase M');
+axis([-1e9, 1e9 -110 -70]);
+xlabel('Frecuencia (Hz)')
+ylabel('dB')
+grid on;
 
