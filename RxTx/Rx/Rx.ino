@@ -7,7 +7,7 @@ void setup()
 
     // Se inicializa el RF
     vw_setup(2000);  // velocidad: Bits per segundo
-    vw_set_rx_pin(2);    //Pin 2 como entrada del RF
+    vw_set_rx_pin(52);    //Pin 2 como entrada del RF
     vw_rx_start();       // Se inicia como receptor
 }
 
