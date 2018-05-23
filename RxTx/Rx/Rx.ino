@@ -1,4 +1,86 @@
-#include <VirtualWire.h>
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+/*
+  433 MHz RF Module Receiver Demonstration 1
+  RF-Rcv-Demo-1.ino
+  Demonstrates 433 MHz RF Receiver Module
+  Use with Transmitter Demonstration 1
+ 
+  DroneBot Workshop 2018
+  https://dronebotworkshop.com
+*/
+ 
+// Include RadioHead Amplitude Shift Keying Library
+#include <RH_ASK.h>
+// Include dependant SPI Library 
+#include <SPI.h> 
+ 
+// Create Amplitude Shift Keying Object
+RH_ASK rf_driver;
+ 
+void setup()
+{
+    // Initialize ASK Object
+    rf_driver.init();
+    // Setup Serial Monitor
+    Serial.begin(9600);
+}
+ 
+void loop()
+{
+    // Set buffer to size of expected message
+    uint8_t buf[24];
+    uint8_t buflen = sizeof(buf);
+    // Check if received packet is correct size
+    if (rf_driver.recv(buf, &buflen))
+    {
+      
+      // Message received with valid checksum
+      Serial.print("Message Received: ");
+      Serial.println((char*)buf);         
+    }
+}
+
+/*#include <VirtualWire.h>
 
 void setup()
 {
@@ -43,7 +125,7 @@ void loop()
             Serial.println(dato2);
         }
     }
-}
+}*/
 
 
 
