@@ -1,4 +1,39 @@
-#include <VirtualWire.h>
+/*
+  433 MHz RF Module Transmitter Demonstration 1
+  RF-Xmit-Demo-1.ino
+  Demonstrates 433 MHz RF Transmitter Module
+  Use with Receiver Demonstration 1
+ 
+  DroneBot Workshop 2018
+  https://dronebotworkshop.com
+*/
+ 
+// Include RadioHead Amplitude Shift Keying Library
+#include <RH_ASK.h>
+// Include dependant SPI Library 
+#include <SPI.h> 
+ 
+// Create Amplitude Shift Keying Object
+RH_ASK rf_driver;
+ 
+void setup()
+{
+    // Initialize ASK Object
+    rf_driver.init();
+}
+ 
+void loop()
+{
+    const char *msg = "Welcome to the Workshop!";
+    rf_driver.send((uint8_t *)msg, strlen(msg));
+    rf_driver.waitPacketSent();
+    delay(1000);
+}
+
+
+
+
+/*#include <VirtualWire.h>
 
 void setup()
 {
@@ -7,7 +42,7 @@ void setup()
 
     // Se inicializa el RF
     vw_setup(2000); // velocidad: Bits per segundo
-    vw_set_tx_pin(2); //Pin 2 como salida para el RF 
+    vw_set_tx_pin(12); //Pin 2 como salida para el RF 
 }
 
 void loop()
@@ -21,14 +56,18 @@ void loop()
     str.toCharArray(buf,sizeof(buf)); //convertimos el String en un array
     vw_send((uint8_t *)buf, strlen(buf)); //Enviamos el array
     vw_wait_tx(); //Esperamos hasta que el mensaje se envie
+    Serial.println(buf);
+    
     
     str="f"+String(dato2); //convertimos el float a String y agramos un inicio de trama
     str.toCharArray(buf,sizeof(buf)); //convertimos el String en un array
     vw_send((uint8_t *)buf, strlen(buf)); ////Enviamos el array
     vw_wait_tx(); //Esperamos hasta que el mensaje se envie
-    
+
+
+    Serial.println(buf);
     delay(200);
-}
+}*/
 
 
 
