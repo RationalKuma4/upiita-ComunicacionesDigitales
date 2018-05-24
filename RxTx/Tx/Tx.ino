@@ -1,22 +1,31 @@
 #include <VirtualWire.h>
  
 const int dataPin = 9;
- 
+   
 void setup()
 {
-    Serial.begin(9600);     
-    vw_setup(2000);
-    vw_set_tx_pin(dataPin);
+  vw_setup(2000);
+  vw_set_tx_pin(dataPin);
 }
  
 void loop()
 {
-    while (Serial.available() > 0) 
-    {
-      char data[1];
-      data[0] = Serial.read();
-      vw_send((uint8_t*)data,sizeof(data));
-      vw_wait_tx();         
-    }
-    delay(200);
+  String str;  
+  char buf[VW_MAX_MESSAGE_LEN];
+   
+  // Ejemplo de envío int
+  int dataInt = millis() / 1000;
+  str = "i" + String(dataInt); /// Convertir a string
+  str.toCharArray(buf,sizeof(buf)); // Convertir a char array
+  vw_send((uint8_t *)buf, strlen(buf)); // Enviar array
+  vw_wait_tx(); // Esperar envio
+  
+  // Ejemplo de envío float
+  float dataFloat = 3.14;
+  str = "f" + String(dataFloat); // Convertir a string
+  str.toCharArray(buf,sizeof(buf)); // Convertir a char array
+  vw_send((uint8_t *)buf, strlen(buf)); // Enviar array
+  vw_wait_tx(); // Esperar envio
+  
+  delay(200);
 }

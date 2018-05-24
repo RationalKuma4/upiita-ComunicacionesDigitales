@@ -1,34 +1,43 @@
 #include <VirtualWire.h>
  
 const int dataPin = 9;
-const int ledPin = 12;
  
 void setup()
 {
+    Serial.begin(9600);
     vw_setup(2000);
     vw_set_rx_pin(dataPin);
     vw_rx_start();
-    
-    pinMode(ledPin, OUTPUT);
-    digitalWrite(ledPin, true);
-    delay(300);
-    digitalWrite(ledPin, false);
 }
  
 void loop()
 {
-    uint8_t data;
-    uint8_t dataLength=1;
+    uint8_t buf[VW_MAX_MESSAGE_LEN];
+    uint8_t buflen = VW_MAX_MESSAGE_LEN;
  
-    if (vw_get_message(&data,&dataLength))
+   // Recibir dato
+    if (vw_get_message((uint8_t *)buf,&buflen))
     {
-        if((char)data=='a')
+      String dataString;
+        if((char)buf[0]=='i')
         {
-            digitalWrite(ledPin, true);
+            for (int i = 1; i < buflen; i++)
+            {
+            dataString.concat((char)buf[i]);
+            }
+            int dataInt = dataString.toInt();  // Convertir a int
+            Serial.print("Int: ");
+            Serial.println(dataInt);
         }
-        else if((char)data=='b')
+        else if((char)buf[0]=='f')
         {
-            digitalWrite(ledPin, false);
-        }            
+            for (int i = 1; i < buflen; i++)
+            {
+            dataString.concat((char)buf[i]);
+            }
+            float dataFloat = dataString.toFloat();  // Convertir a float
+            Serial.print("Float: ");
+            Serial.println(dataFloat);
+        }
     }
 }
