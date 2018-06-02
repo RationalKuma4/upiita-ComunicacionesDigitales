@@ -9,7 +9,6 @@ int sensorValue1 = 0, sensorValue2 = 0, sensorValue3 = 0;
 void setup() 
 {
   Serial.begin(9600);
-  
   vw_set_tx_pin(dataPin);
   vw_setup(2000);
 }

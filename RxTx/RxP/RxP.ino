@@ -17,7 +17,12 @@ void loop()
   String dataString;
   if (vw_get_message((uint8_t *)buf,&buflen))
   {
-    if((char)buf[0]=='a')
+    for (int i = 1; i < buflen; i++)
+    {
+      dataString.concat((char)buf[i]);
+    }
+    Serial.println(dataString);
+    /*if((char)buf[0]=='a')
     {
         for (int i = 1; i < buflen; i++)
         {
@@ -43,6 +48,6 @@ void loop()
         }
         pot3 = dataString.toInt();
         Serial.println(String(pot1)+","+String(pot2)+","+String(pot3));
-    }
+    }*/
   }
 }
