@@ -17,7 +17,7 @@ void loop()
 {
   delay(1000);
   LeerPotenciometros();
-  TransmitirValores(sensorValue1, sensorValue2, sensorValue3);
+  TransmitirValores();
 }
 
 void LeerPotenciometros()
@@ -28,13 +28,17 @@ void LeerPotenciometros()
   Serial.println(String(sensorValue1)+","+String(sensorValue2)+","+String(sensorValue3));
 }
 
-void TransmitirValores(int sensorValue1, int sensorValue2, int sensorValue3)
+void TransmitirValores()
 {
   String str;  
   char buf[VW_MAX_MESSAGE_LEN];
+  str = String(sensorValue1)+","+String(sensorValue2)+","+String(sensorValue3); /// Convertir a string
+  str.toCharArray(buf,sizeof(buf)); // Convertir a char array
+  vw_send((uint8_t *)buf, strlen(buf)); // Enviar array
+  vw_wait_tx(); // Esperar envio
+  
 
-  delay(10);
-  // Envio P1
+  /*// Envio P1
   str = "a" + String(sensorValue1); /// Convertir a string
   str.toCharArray(buf,sizeof(buf)); // Convertir a char array
   vw_send((uint8_t *)buf, strlen(buf)); // Enviar array
@@ -52,7 +56,7 @@ void TransmitirValores(int sensorValue1, int sensorValue2, int sensorValue3)
   str = "c" + String(sensorValue3); /// Convertir a string
   str.toCharArray(buf,sizeof(buf)); // Convertir a char array
   vw_send((uint8_t *)buf, strlen(buf)); // Enviar array
-  vw_wait_tx(); // Esperar envio
+  vw_wait_tx(); // Esperar envio*/
 }
 
 
