@@ -17,7 +17,7 @@ void loop()
   String dataString;
   if (vw_get_message((uint8_t *)buf,&buflen))
   {
-    for (int i = 1; i < buflen; i++)
+    for (int i = 0; i < buflen; i++)
     {
       dataString.concat((char)buf[i]);
     }
