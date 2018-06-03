@@ -1,50 +1,57 @@
-import atexit
 import serial
+import matplotlib.pyplot as plt
 from drawnow import *
+import atexit
+import re
+
+# import random
 
 values = []
 values1 = []
 values2 = []
+
 plt.ion()
-plt.close("all")
 cnt = 0
-serialArduino = serial.Serial('COM3', 9600)
 
 for i in range(0, 30):
     values.append(0)
     values1.append(0)
     values2.append(0)
 
+serialArduino = serial.Serial('COM4', 9600)
 
-def plotValues():
+
+def plotValues(pone, ptwo, pthre):
     plt.subplot(3, 1, 1)
     plt.xlabel('t')
     plt.ylabel('v')
-    plt.plot(values, 'rx-', label='Potenciometro 1')
-    # plt.legend(loc='upper right')
+    plt.plot(values, 'rx-', label=pone)
+    plt.legend(loc='upper right')
     plt.grid(True)
     plt.title('Potenciometro 1')
 
     plt.subplot(3, 1, 2)
     plt.xlabel('t')
     plt.ylabel('v')
-    plt.plot(values1, 'gx-', label='Potenciometro 2')
-    # plt.legend(loc='upper right')
+    plt.plot(values1, 'gx-', label=ptwo)
+    plt.legend(loc='upper right')
     plt.grid(True)
     plt.title('Potenciometro 2')
 
     plt.subplot(3, 1, 3)
     plt.xlabel('t')
     plt.ylabel('v')
-    plt.plot(values2, 'bx-', label='Potenciometro 1')
-    # plt.legend(loc='upper right')
+    plt.plot(values2, 'bx-', label=pthre)
+    plt.legend(loc='upper right')
     plt.grid(True)
     plt.title('Potenciometro 3')
+
+    plt.show()
 
 
 def doAtExit():
     serialArduino.close()
-    print("Close serial")
+    print("Cerra serial")
     print("serialArduino.isOpen() = " + str(serialArduino.isOpen()))
 
 
@@ -57,17 +64,32 @@ while True:
         pass
     valueRead = serialArduino.readline(500)
     vas = str(valueRead)
-    vass = vas.replace("\\n", "").replace("\\r", "").replace("b", "").replace("\'", "").split(",")
+    vass = vas.replace("\\n", "").replace("\\r", "").replace("b", "") \
+        .replace("\'", "").split(",")
+    print(vass)
     try:
         pone = int(vass[0])
         ptwo = int(vass[1])
         pthre = int(vass[2])
-        values.append(pone)
-        values.pop(0)
-        values1.append(ptwo)
-        values1.pop(0)
-        values2.append(pthre)
-        values2.pop(0)
-        drawnow(plotValues)
+        # pone = random.randint(1, 100)
+        # ptwo = random.randint(1, 100)
+        # pthre = random.randint(1, 100)
+        if pone <= 2000:
+            if pone >= 0:
+                values.append(pone)
+                values.pop(0)
+
+                values1.append(ptwo)
+                values1.pop(0)
+
+                values2.append(pthre)
+                values2.pop(0)
+
+                plotValues(pone, ptwo, pthre)
+                # drawnow(plotValues(pone, ptwo, pthre))
+            else:
+                print("Numero negativo")
+        else:
+            print("Error")
     except ValueError:
-        print("Invalido!")
+        print("No se puede convertir")
