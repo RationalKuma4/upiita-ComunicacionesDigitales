@@ -10,11 +10,6 @@ numSamplesPerSymbol = 1;    % Oversampling factor
 rng default                 % Use default random number generator
 dataIn = randi([0 1],n,1);  % Generate vector of binary data
 
-stem(dataIn(1:40),'filled');
-title('Random Bits');
-xlabel('Bit Index');
-ylabel('Binary Value');
-
 dataInMatrix = reshape(dataIn,length(dataIn)/k,k);   % Reshape data into binary k-tuples, k = log2(M)
 dataSymbolsIn = bi2de(dataInMatrix);                 % Convert to intege
 
